@@ -150,9 +150,14 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
+// E.10 — Base path conditionnel OBLIGATOIRE pour GitHub Pages
+const isProd = process.env.NODE_ENV === 'production';
+
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
 
 export default defineConfig({
+  // E.10 — Base path conditionnel OBLIGATOIRE pour GitHub Pages
+  base: isProd ? "/dashboard-bollinger-v2/" : "/",
   plugins,
   resolve: {
     alias: {
@@ -164,7 +169,8 @@ export default defineConfig({
   envDir: path.resolve(import.meta.dirname),
   root: path.resolve(import.meta.dirname, "client"),
   build: {
-    outDir: path.resolve(import.meta.dirname, "dist/public"),
+    // E.10 — outDir = dist (pas dist/public) pour GitHub Pages artifact path: dist
+    outDir: path.resolve(import.meta.dirname, "dist"),
     emptyOutDir: true,
   },
   server: {

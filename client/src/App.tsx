@@ -1,39 +1,43 @@
+/**
+ * App.tsx — Dashboard CI Bollinger
+ * RÈGLE IMMUABLE GITHUB PAGES (E.9):
+ * - WouterRouter base="/dashboard-bollinger-v2" OBLIGATOIRE
+ * - AccessProvider wrapping toute l'application
+ * - Pas de doublon d'imports Route/Switch
+ * - Composant Routes() distinct de App()
+ */
+
+import { Router as WouterRouter, Route, Switch } from "wouter";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { AccessProvider } from "./contexts/AccessContext";
 import Home from "./pages/Home";
 
-
-function Router() {
+function Routes() {
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
+      <ThemeProvider defaultTheme="dark">
+        <AccessProvider>
+          <TooltipProvider>
+            <Toaster />
+            <WouterRouter base="/dashboard-bollinger-v2">
+              <Routes />
+            </WouterRouter>
+          </TooltipProvider>
+        </AccessProvider>
       </ThemeProvider>
     </ErrorBoundary>
   );
