@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Noah Consultant – Pilotage data-driven pour les PME viticoles françaises via Power BI & Microsoft Fabric. Cas d'usage, architecture cible et offres d'accompagnement." />
+  <title>Noah Consultant | Power BI & Fabric pour la Filière Viticole</title>
+  <style>
+    /* ============================================================
+       VARIABLES & RESET
+    ============================================================ */
+    :root {
+      --color-primary:   #6B2D3E;   /* Bordeaux profond */
+      --color-secondary: #A0522D;   /* Terre cuite / Bois */
+      --color-accent:    #C8A96E;   /* Or / Dorure */
+      --color-dark:      #1A1A2E;   /* Nuit */
+      --color-light:     #FAF7F2;   /* Parchemin */
+      --color-white:     #FFFFFF;
+      --color-text:      #2C2C2C;
+      --color-muted:     #6B6B6B;
+      --color-border:    #E0D5C5;
+      --font-serif:      'Georgia', 'Times New Roman', serif;
+      --font-sans:       'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+      --radius:          8px;
+      --shadow:          0 4px 24px rgba(0,0,0,0.10);
+      --shadow-lg:       0 8px 40px rgba(0,0,0,0.16);
+      --transition:      0.25s ease;
+      --max-width:       1140px;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-light);
+      color: var(--color-text);
+      line-height: 1.7;
+      font-size: 16px;
+      overflow-x: hidden;
+    }
+
+    img { max-width: 100%; display: block; }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+    a:hover { color: var(--color-secondary); }
+
+    .container {
+      width: 100%;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ============================================================
+       TYPOGRAPHY
+    ============================================================ */
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      color: var(--color-dark);
+      line-height: 1.25;
+    }
+    h1 { font-size: clamp(2rem, 5vw, 3.2rem); }
+    h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); }
+    h3 { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+    h4 { font-size: 1.1rem; }
+    p  { margin-bottom: 1rem; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      margin-bottom: 0.75rem;
+    }
+
+    /* ============================================================
+       BUTTONS
+    ============================================================ */
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), transform var(--transition), box-shadow var(--transition);
+      border: 2px solid transparent;
+      text-align: center;
+    }
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-white);
+      border-color: var(--color-primary);
+    }
+    .btn-primary:hover {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+      color: var(--color-white);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--color-white);
+      border-color: var(--color-white);
+    }
+    .btn-outline:hover {
+      background: var(--color-white);
+      color: var(--color-primary);
+      transform: translateY(-2px);
+    }
+    .btn-accent {
+      background: var(--color-accent);
+      color: var(--color-dark);
+      border-color: var(--color-accent);
+    }
+    .btn-accent:hover {
+      background: var(--color-secondary);
+      border-color: var(--color-secondary);
+      color: var(--color-white);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       NAVIGATION
+    ============================================================ */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(26, 26, 46, 0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(200,169,110,0.2);
+      transition: box-shadow var(--transition);
+    }
+    .navbar.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.3); }
+
+    .navbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+
+    .navbar-brand {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+    .navbar-brand .brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--color-white);
+      letter-spacing: 0.02em;
+    }
+    .navbar-brand .brand-tagline {
+      font-size: 0.68rem;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .navbar-links {
+      display: flex;
+      list-style: none;
+      gap: 28px;
+      align-items: center;
+    }
+    .navbar-links a {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color var(--transition);
+    }
+    .navbar-links a:hover { color: var(--color-accent); }
+    .navbar-links .nav-cta .btn { padding: 10px 22px; font-size: 0.9rem; }
+
+    .burger {
+      display: none;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 26px;
+      height: 18px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .burger span {
+      display: block;
+      height: 2px;
+      background: var(--color-white);
+      border-radius: 2px;
+      transition: transform var(--transition), opacity var(--transition);
+    }
+    .burger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .burger.open span:nth-child(2) { opacity: 0; }
+    .burger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      background: var(--color-dark);
+      padding: 20px 24px;
+      gap: 16px;
+      border-top: 1px solid rgba(200,169,110,0.2);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: rgba(255,255,255,0.85);
+      font-size: 1rem;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu .btn { width: 100%; margin-top: 8px; }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 0 80px;
+      background: linear-gradient(135deg, var(--color-dark) 0%, #2D1B2E 40%, #3D1A20 70%, var(--color-primary) 100%);
+    }
+
+    .hero-bg-pattern {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(200,169,110,0.08) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(107,45,62,0.15) 0%, transparent 40%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.4);
+      color: var(--color-accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 50px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      color: var(--color-white);
+      margin-bottom: 24px;
+    }
+    .hero h1 .highlight {
+      color: var(--color-accent);
+      display: block;
+    }
+
+    .hero-lead {
+      font-size: 1.15rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 40px;
+      max-width: 580px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      padding-top: 40px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      flex-wrap: wrap;
+    }
+    .hero-stat .stat-value {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      line-height: 1;
+    }
+    .hero-stat .stat-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ============================================================
+       SECTION GENERIC
+    ============================================================ */
+    section { padding: 96px 0; }
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 64px;
+    }
+    .section-header p {
+      color: var(--color-muted);
+      font-size: 1.05rem;
+      margin-bottom: 0;
+    }
+
+    /* ============================================================
+       PAIN POINTS
+    ============================================================ */
+    .pain-section { background: var(--color-white); }
+
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .pain-card {
+      background: var(--color-light);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      position: relative;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .pain-card:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-4px);
+    }
+    .pain-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+    }
+    .pain-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      color: var(--color-primary);
+    }
+    .pain-card p {
+      font-size: 0.95rem;
+      color: var(--color-muted);
+      margin-bottom: 0;
+    }
+
+    /* ============================================================
+       SOLUTION
+    ============================================================ */
+    .solution-section { background: var(--color-light); }
+
+    .solution-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .solution-visual {
+      background: linear-gradient(135deg, var(--color-dark) 0%, #2D1B2E 100%);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .arch-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .arch-box {
+      flex: 1;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(200,169,110,0.3);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      text-align: center;
+    }
+    .arch-box .arch-icon { font-size: 1.4rem; margin-bottom: 4px; }
+    .arch-box .arch-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+      display: block;
+    }
+    .arch-box .arch-sub {
+      font-size: 0.65rem;
+      color: rgba(255,255,255,0.5);
+      display: block;
+    }
+
+    .arch-arrow {
+      color: var(--color-accent);
+      font-size: 1.2rem;
+      flex-shrink: 0;
+    }
+
+    .arch-title {
+      color: var(--color-accent);
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      margin-bottom: 20px;
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+
+    .solution-content .section-label { display: block; }
+    .solution-content h2 { margin-bottom: 20px; }
+    .solution-content p { color: var(--color-muted); }
+
+    .benefit-list {
+      list-style: none;
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .benefit-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .benefit-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .benefit-list li span { font-size: 0.95rem; color: var(--color-text); }
+
+    /* ============================================================
+       KPI SECTION
+    ============================================================ */
+    .kpi-section {
+      background: linear-gradient(135deg, var(--color-dark) 0%, #2D1B2E 100%);
+      color: var(--color-white);
+    }
+    .kpi-section .section-header h2 { color: var(--color-white); }
+    .kpi-section .section-header p { color: rgba(255,255,255,0.65); }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    .kpi-card {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(200,169,110,0.25);
+      border-radius: var(--radius);
+      padding: 28px 24px;
+      text-align: center;
+      transition: background var(--transition), transform var(--transition);
+    }
+    .kpi-card:hover {
+      background: rgba(200,169,110,0.1);
+      transform: translateY(-4px);
+    }
+    .kpi-number {
+      font-family: var(--font-serif);
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: var(--color-accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .kpi-label {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+
+    /* ============================================================
+       USE CASES
+    ============================================================ */
+    .usecases-section { background: var(--color-white); }
+
+    .usecases-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .usecase-card {
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .usecase-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-6px);
+    }
+
+    .usecase-header {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      padding: 28px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .usecase-header .uc-icon {
+      font-size: 2rem;
+      background: rgba(255,255,255,0.15);
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .usecase-header h3 {
+      color: var(--color-white);
+      font-size: 1.1rem;
+    }
+
+    .usecase-body {
+      padding: 24px;
+      background: var(--color-light);
+    }
+    .usecase-body p {
+      font-size: 0.95rem;
+      color: var(--color-muted);
+      margin-bottom: 16px;
+    }
+    .usecase-result {
+      background: var(--color-white);
+      border-left: 3px solid var(--color-accent);
+      padding: 12px 16px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      font-size: 0.88rem;
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* ============================================================
+       PROCESS
+    ============================================================ */
+    .process-section { background: var(--color-light); }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      position: relative;
+    }
+
+    .process-step {
+      text-align: center;
+      position: relative;
+    }
+
+    .step-number {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .step-connector {
+      position: absolute;
+      top: 28px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(to right, var(--color-primary), var(--color-accent));
+      z-index: 1;
+    }
+    .process-step:last-child .step-connector { display: none; }
+
+    .process-step h4 {
+      color: var(--color-primary);
+      margin-bottom: 8px;
+    }
+    .process-step p {
+      font-size: 0.88rem;
+      color: var(--color-muted);
+      margin-bottom: 0;
+    }
+    .step-duration {
+      display: inline-block;
+      background: rgba(107,45,62,0.1);
+      color: var(--color-primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 50px;
+      margin-top: 10px;
+    }
+
+    /* ============================================================
+       ABOUT
+    ============================================================ */
+    .about-section { background: var(--color-white); }
+
+    .about-layout {
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .about-visual {
+      position: relative;
+    }
+    .about-card {
+      background: linear-gradient(135deg, var(--color-primary), var(--color-dark));
+      border-radius: 16px;
+      padding: 40px;
+      text-align: center;
+      color: var(--color-white);
+    }
+    .about-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(200,169,110,0.2);
+      border: 3px solid var(--color-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-serif);
+      font-size: 2.2rem;
+      color: var(--color-accent);
+      margin: 0 auto 20px;
+    }
+    .about-card .name {
+      font-family: var(--font-serif);
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .about-card .role {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 20px;
+    }
+    .tech-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .tech-badge {
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.4);
+      color: var(--color-accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 50px;
+      letter-spacing: 0.06em;
+    }
+
+    .about-content .section-label { display: block; }
+    .about-content h2 { margin-bottom: 20px; }
+    .about-content p { color: var(--color-muted); }
+
+    .expertise-list {
+      list-style: none;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .expertise-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+    .expertise-list li::before {
+      content: "▸";
+      color: var(--color-accent);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    /* ============================================================
+       OFFERS
+    ============================================================ */
+    .offers-section {
+      background: var(--color-light);
+    }
+
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .offer-card {
+      background: var(--color-white);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 36px 28px;
+      position: relative;
+      transition: box-shadow var(--transition), transform var(--transition);
+    }
+    .offer-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-6px);
+    }
+    .offer-card.featured {
+      border-color: var(--color-primary);
+      border-width: 2px;
+    }
+    .offer-featured-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--color-primary);
+      color: var(--color-white);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 18px;
+      border-radius: 50px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .offer-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+    }
+    .offer-card h3 {
+      color: var(--color-primary);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .offer-duration {
+      font-size: 0.8rem;
+      color: var(--color-accent);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+    .offer-card p {
+      font-size: 0.9rem;
+      color: var(--color-muted);
+      margin-bottom: 20px;
+    }
+    .offer-deliverables {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    .offer-deliverables li {
+      font-size: 0.88rem;
+      color: var(--color-text);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .offer-deliverables li::before {
+      content: "✓";
+      color: var(--color-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .offer-card .btn { width: 100%; }
+
+    /* ============================================================
+       CTA SECTION
+    ============================================================ */
+    .cta-section {
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-dark) 100%);
+      padding: 96px 0;
+      text-align: center;
+    }
+    .cta-section h2 {
+      color: var(--color-white);
+      margin-bottom: 20px;
+    }
+    .cta-section p {
+      color: rgba(255,255,255,0.75);
+      font-size: 1.1rem;
+      max-width: 560px;
+      margin: 0 auto 40px;
+    }
+    .cta-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cta-note {
+      margin-top: 20px;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      background: var(--color-dark);
+      color: rgba(255,255,255,0.6);
+      padding: 40px 0;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-brand .brand-name {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--color-white);
+    }
+    .footer-brand .brand-tagline {
+      font-size: 0.72rem;
+      color: var(--color-accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      flex-wrap: wrap;
+    }
+    .footer-links a {
+      color: rgba(255,255,255,0.55);
+      font-size: 0.85rem;
+      transition: color var(--transition);
+    }
+    .footer-links a:hover { color: var(--color-accent); }
+    .footer-copy {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.35);
+    }
+
+    /* ============================================================
+       ===== RESPONSIVE MEDIA QUERIES =====
+    ============================================================ */
+
+    /* --- Tablette large (≤ 1024px) --- */
+    @media (max-width: 1024px) {
+      section { padding: 72px 0; }
+
+      .pain-grid { grid-template-columns: repeat(2, 1fr); }
+      .kpi-grid  { grid-template-columns: repeat(2, 1fr); }
+      .usecases-grid { grid-template-columns: repeat(2, 1fr); }
+      .offers-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .solution-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .about-layout {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .about-visual { max-width: 400px; margin: 0 auto; }
+
+      .process-steps { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+      .step-connector { display: none; }
+
+      .hero-stats { gap: 28px; }
+    }
+
+    /* --- Petits écrans / tablette portrait (≤ 768px) --- */
+    @media (max-width: 768px) {
+      section { padding: 56px 0; }
+      .container { padding: 0 16px; }
+
+      .navbar-links { display: none; }
+      .burger { display: flex; }
+
+      .hero { padding: 100px 0 60px; min-height: auto; }
+      .hero-actions { flex-direction: column; }
+      .hero-actions .btn { width: 100%; text-align: center; }
+      .hero-stats { gap: 20px; }
+      .hero-stat .stat-value { font-size: 1.6rem; }
+
+      .pain-grid { grid-template-columns: 1fr; }
+      .kpi-grid  { grid-template-columns: repeat(2, 1fr); }
+      .usecases-grid { grid-template-columns: 1fr; }
+      .offers-grid { grid-template-columns: 1fr; }
+
+      .process-steps { grid-template-columns: 1fr; gap: 24px; }
+
+      .footer-inner { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+
+      .section-header { margin-bottom: 40px; }
+    }
+
+    /* --- Smartphone (≤ 480px) --- */
+    @media (max-width: 480px) {
+      h1 { font-size: 1.8rem; }
+      h2 { font-size: 1.5rem; }
+      h3 { font-size: 1.15rem; }
+
+      section { padding: 44px 0; }
+
+      .hero-badge { font-size: 0.7rem; }
+      .hero-lead { font-size: 1rem; }
+      .hero-stats {
+        flex-direction: column;
+        gap: 16px;
+        padding-top: 28px;
+        margin-top: 36px;
+      }
+
+      .kpi-grid { grid-template-columns: 1fr; }
+      .kpi-number { font-size: 2rem; }
+
+      .offer-card { padding: 28px 20px; }
+      .pain-card  { padding: 24px 20px; }
+
+      .cta-actions { flex-direction: column; }
+      .cta-actions .btn { width: 100%; }
+
+      .arch-row { flex-direction: column; }
+      .arch-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="navbar-inner">
+        <a href="#" class="navbar-brand">
+          <span class="brand-name">Noah Consultant</span>
+          <span class="brand-tagline">Data & AI · Microsoft · Viticulture</span>
+        </a>
+        <ul class="navbar-links">
+          <li><a href="#probleme">Enjeux</a></li>
+          <li><a href="#solution">Solution</a></li>
+          <li><a href="#cas-usage">Cas d'usage</a></li>
+          <li><a href="#process">Processus</a></li>
+          <li><a href="#offres">Offres</a></li>
+          <li class="nav-cta"><a href="#contact" class="btn btn-primary">Prendre RDV</a></li>
+        </ul>
+        <button class="burger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#probleme" class="mobile-link">Enjeux</a>
+      <a href="#solution" class="mobile-link">Solution</a>
+      <a href="#cas-usage" class="mobile-link">Cas d'usage</a>
+      <a href="#process" class="mobile-link">Processus</a>
+      <a href="#offres" class="mobile-link">Offres</a>
+      <a href="#contact" class="btn btn-primary">Prendre RDV</a>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="hero" id="accueil">
+    <div class="hero-bg-pattern"></div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge">
+          <span>🍷</span>
+          <span>Spécialiste Data &amp; AI · Filière Viticole</span>
+        </div>
+        <h1>
+          Pilotez votre performance commerciale
+          <span class="highlight">avec Power BI &amp; Microsoft Fabric</span>
+        </h1>
+        <p class="hero-lead">
+          Vous dirigez un domaine ou une coopérative viticole ? Transformez vos données ERP et Excel en tableaux de bord décisionnels actionnables — et prenez enfin le contrôle de votre rentabilité par cuvée, par canal et par marché.
+        </p>
+        <div class="hero-actions">
+          <a href="#contact" class="btn btn-primary">Demander un diagnostic gratuit</a>
+          <a href="#solution" class="btn btn-outline">Découvrir la solution</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <div class="stat-value">−80%</div>
+            <div class="stat-label">Temps de reporting mensuel</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-value">+2 pts</div>
+            <div class="stat-label">Marge nette récupérée</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-value">−30%</div>
+            <div class="stat-label">Ruptures de stock</div>
+          </div>
+          <div class="hero-stat">
+            <div class="stat-value">8 sem.</div>
+            <div class="stat-label">Délai de déploiement</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PAIN POINTS
+  ============================================================ -->
+  <section class="pain-section" id="probleme">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Les irritants que vous connaissez</span>
+        <h2>Pourquoi les PME viticoles perdent de la marge sans le savoir</h2>
+        <p>Les domaines et coopératives les plus dynamiques à l'export souffrent souvent des mêmes angles morts dans leur pilotage de la performance.</p>
+      </div>
+      <div class="pain-grid">
+        <div class="pain-card">
+          <div class="pain-icon">📊</div>
+          <h3>Vision fragmentée</h3>
+          <p>Vos données de ventes, de stocks et de marges sont dispersées entre l'ERP, des fichiers Excel et des rapports manuels. Impossible d'avoir une vue consolidée en temps réel.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">⏱️</div>
+          <h3>Reporting chronophage</h3>
+          <p>Votre DAF et vos contrôleurs de gestion passent plusieurs jours par mois à produire des reportings qui sont déjà obsolètes à la date de leur diffusion.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">📉</div>
+          <h3>Marges opaques</h3>
+          <p>Vous connaissez votre marge brute globale, mais pas la marge nette réelle de chaque cuvée après déduction des remises GD, des coûts logistiques export et des frais commerciaux.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">🔮</div>
+          <h3>Prévisions artisanales</h3>
+          <p>Les prévisions de ventes sont réalisées "à la main" sur Excel, entraînant des ruptures de stock sur les cuvées phares ou des surstocks coûteux sur d'autres références.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">🌍</div>
+          <h3>Pilotage export approximatif</h3>
+          <p>Difficile de comparer la rentabilité réelle de vos marchés export (États-Unis, Royaume-Uni, Japon…) en intégrant les coûts de transport, de douane et les fluctuations de change.</p>
+        </div>
+        <div class="pain-card">
+          <div class="pain-icon">🎯</div>
+          <h3>Promotions sans ROI mesuré</h3>
+          <p>Vos mises en avant en GD ou vos actions CHR génèrent du volume, mais vous ne savez pas si elles sont réellement rentables une fois la remise et les coûts promotionnels déduits.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SOLUTION
+  ============================================================ -->
+  <section class="solution-section" id="solution">
+    <div class="container">
+      <div class="solution-layout">
+        <div class="solution-visual">
+          <p class="arch-title">Architecture Microsoft — Vue simplifiée</p>
+          <div class="arch-diagram">
+            <div class="arch-row">
+              <div class="arch-box">
+                <div class="arch-icon">🗄️</div>
+                <span class="arch-label">ERP Métier</span>
+                <span class="arch-sub">Ventes · Stocks · Clients</span>
+              </div>
+              <div class="arch-box">
+                <div class="arch-icon">📁</div>
+                <span class="arch-label">Excel / SharePoint</span>
+                <span class="arch-sub">Budgets · Objectifs</span>
+              </div>
+            </div>
+            <div class="arch-row" style="justify-content:center;">
+              <div class="arch-arrow">▼</div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-box" style="flex:none;width:100%;background:rgba(200,169,110,0.12);border-color:rgba(200,169,110,0.5);">
+                <div class="arch-icon">⚙️</div>
+                <span class="arch-label">Microsoft Fabric</span>
+                <span class="arch-sub">Lakehouse · Data Factory · Modèle en étoile</span>
+              </div>
+            </div>
+            <div class="arch-row" style="justify-content:center;">
+              <div class="arch-arrow">▼</div>
+            </div>
+            <div class="arch-row">
+              <div class="arch-box">
+                <div class="arch-icon">📈</div>
+                <span class="arch-label">Power BI</span>
+                <span class="arch-sub">Dashboards · Alertes · Mobile</span>
+              </div>
+              <div class="arch-box">
+                <div class="arch-icon">👥</div>
+                <span class="arch-label">Utilisateurs</span>
+                <span class="arch-sub">DG · DAF · DirCo · Commerciaux</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="solution-content">
+          <span class="section-label">Notre solution</span>
+          <h2>D'un reporting subi à un pilotage proactif de votre performance</h2>
+          <p>Noah Consultant déploie une architecture data complète, basée sur Microsoft Fabric et Power BI, adaptée à la réalité opérationnelle et budgétaire d'une PME viticole française. Pas de sur-ingénierie : une solution pragmatique, orientée ROI et adoptée par vos équipes en quelques semaines.</p>
+          <ul class="benefit-list">
+            <li>
+              <div class="benefit-check">✓</div>
+              <span><strong>Direction Générale :</strong> une vision consolidée et actualisée quotidiennement pour des arbitrages stratégiques rapides (mix-produit, allocation des volumes, marchés prioritaires).</span>
+            </li>
+            <li>
+              <div class="benefit-check">✓</div>
+              <span><strong>Direction Financière :</strong> fiabilisation des chiffres, suivi de la marge nette par cuvée et clôtures mensuelles accélérées de plusieurs jours.</span>
+            </li>
+            <li>
+              <div class="benefit-check">✓</div>
+              <span><strong>Direction Commerciale :</strong> suivi quotidien des ventes, de l'efficacité des promotions et de la performance par représentant, canal et pays.</span>
+            </li>
+            <li>
+              <div class="benefit-check">✓</div>
+              <span><strong>Sécurité des accès :</strong> chaque utilisateur ne voit que les données qui le concernent (Row-Level Security Power BI).</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       KPI
+  ============================================================ -->
+  <section class="kpi-section" id="kpi">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Résultats mesurables</span>
+        <h2>Des bénéfices concrets, mesurables dès les premières semaines</h2>
+        <p>Ces indicateurs sont issus de retours d'expérience sur des projets similaires menés auprès de PME viticoles et agroalimentaires.</p>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-number">−80%</div>
+          <div class="kpi-label">Temps consacré à la production du reporting mensuel</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-number">+2 pts</div>
+          <div class="kpi-label">Marge nette récupérée grâce au pilotage des remises et de l'allocation géographique</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-number">−30%</div>
+          <div class="kpi-label">Ruptures de stock sur les cuvées stratégiques grâce aux prévisions croisées</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-number">100%</div>
+          <div class="kpi-label">Des KPI accessibles en temps réel sur PC, tablette et smartphone</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       USE CASES
+  ============================================================ -->
+  <section class="usecases-section" id="cas-usage">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Cas d'usage concrets</span>
+        <h2>Trois scénarios qui transforment votre pilotage commercial</h2>
+        <p>Basés sur le cas fictif du Domaine des Terres Pourpres (18 M€ CA, 60% export, 45 cuvées, 25 pays).</p>
+      </div>
+      <div class="usecases-grid">
+        <div class="usecase-card">
+          <div class="usecase-header">
+            <div class="uc-icon">🌍</div>
+            <h3>Pilotage de la Performance Export</h3>
+          </div>
+          <div class="usecase-body">
+            <p>Le directeur commercial consulte chaque matin un tableau de bord Power BI affichant la marge nette par pays d'export, intégrant automatiquement les coûts de fret, de douane et les taux de change. Il identifie en un coup d'œil que le marché japonais est 40% plus rentable que le marché britannique à volume équivalent.</p>
+            <div class="usecase-result">→ Décision : réallocation de 500 hl vers le Japon lors du prochain millésime.</div>
+          </div>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-header">
+            <div class="uc-icon">🏷️</div>
+            <h3>Optimisation des Promotions GD</h3>
+          </div>
+          <div class="usecase-body">
+            <p>La DAF analyse l'impact réel d'une mise en avant en grande distribution sur la cuvée "Prestige Rouge". Le rapport Power BI compare automatiquement le volume additionnel généré, la remise accordée et les coûts de mise en avant. Résultat : la promotion a généré du volume mais détruit de la marge.</p>
+            <div class="usecase-result">→ Décision : renégociation des conditions de mise en avant pour la prochaine campagne.</div>
+          </div>
+        </div>
+        <div class="usecase-card">
+          <div class="usecase-header">
+            <div class="uc-icon">📦</div>
+            <h3>Anticipation des Ruptures de Stock</h3>
+          </div>
+          <div class="usecase-body">
+            <p>Le responsable logistique consulte un rapport de couverture de stock par cuvée, croisant le stock disponible avec les prévisions de ventes des 6 prochains mois. Il détecte que la cuvée "Châteauneuf Réserve" sera en rupture dans 3 mois, avant la mise en bouteille du nouveau millésime.</p>
+            <div class="usecase-result">→ Décision : anticipation de la mise en bouteille et communication proactive aux clients export.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       PROCESS
+  ============================================================ -->
+  <section class="process-section" id="process">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Notre méthode</span>
+        <h2>Un déploiement en 4 phases, sans disruption de votre activité</h2>
+        <p>De l'audit initial à la formation de vos équipes, notre approche est structurée pour garantir l'adoption et le ROI.</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-number">1</div>
+          <div class="step-connector"></div>
+          <h4>Cadrage &amp; Audit</h4>
+          <p>Identification des KPI prioritaires, audit des sources de données (ERP, Excel) et définition de la feuille de route.</p>
+          <span class="step-duration">Semaines 1–2</span>
+        </div>
+        <div class="process-step">
+          <div class="step-number">2</div>
+          <div class="step-connector"></div>
+          <h4>Architecture Fabric</h4>
+          <p>Connexion à l'ERP, mise en place du Lakehouse Microsoft Fabric et création du modèle de données en étoile.</p>
+          <span class="step-duration">Semaines 3–5</span>
+        </div>
+        <div class="process-step">
+          <div class="step-number">3</div>
+          <div class="step-connector"></div>
+          <h4>Dashboards Power BI</h4>
+          <p>Développement des tableaux de bord (Ventes, Marges, Stocks, Export) et mise en place des droits d'accès par profil.</p>
+          <span class="step-duration">Semaines 6–8</span>
+        </div>
+        <div class="process-step">
+          <div class="step-number">4</div>
+          <h4>Formation &amp; Go-Live</h4>
+          <p>Recette avec les équipes métiers, formation des utilisateurs clés et déploiement en production.</p>
+          <span class="step-duration">Semaine 9</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       ABOUT
+  ============================================================ -->
+  <section class="about-section" id="about">
+    <div class="container">
+      <div class="about-layout">
+        <div class="about-visual">
+          <div class="about-card">
+            <div class="about-avatar">SB</div>
+            <div class="name">Stanislas BASQUIN</div>
+            <div class="role">Consultant Senior Data &amp; AI — Microsoft</div>
+            <div class="tech-badges">
+              <span class="tech-badge">Power BI</span>
+              <span class="tech-badge">Microsoft Fabric</span>
+              <span class="tech-badge">Azure</span>
+              <span class="tech-badge">Dataiku</span>
+              <span class="tech-badge">Vins &amp; Spiritueux</span>
+            </div>
+          </div>
+        </div>
+        <div class="about-content">
+          <span class="section-label">À propos de Noah Consultant</span>
+          <h2>Une expertise rare : Data &amp; AI Microsoft au service de la filière viticole</h2>
+          <p>Noah Consultant est une micro-agence Data Analytics &amp; AI basée en France, fondée par Stanislas BASQUIN. Notre positionnement est unique : nous combinons une maîtrise technique approfondie de l'écosystème Microsoft (Power BI, Microsoft Fabric, Azure) avec une connaissance sectorielle pointue de la filière Vins &amp; Spiritueux.</p>
+          <p>Nous intervenons auprès de domaines viticoles, de maisons de négoce et de coopératives pour transformer leur donnée en avantage compétitif concret, avec une approche pragmatique et orientée ROI.</p>
+          <ul class="expertise-list">
+            <li>Spécialiste certifié Microsoft Power BI &amp; Fabric</li>
+            <li>Expérience sectorielle en Vins &amp; Spiritueux (GD, CHR, Export)</li>
+            <li>Approche orientée adoption métier et ROI mesurable</li>
+            <li>Accompagnement de la PME à la coopérative exportatrice</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       OFFERS
+  ============================================================ -->
+  <section class="offers-section" id="offres">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Nos offres</span>
+        <h2>Trois niveaux d'accompagnement adaptés à votre maturité data</h2>
+        <p>De l'audit express au déploiement complet, chaque offre est conçue pour délivrer de la valeur rapidement.</p>
+      </div>
+      <div class="offers-grid">
+        <div class="offer-card">
+          <div class="offer-icon">🔍</div>
+          <h3>Diagnostic Express</h3>
+          <div class="offer-duration">1 semaine</div>
+          <p>Audit complet de votre maturité data et feuille de route priorisée pour votre transformation BI.</p>
+          <ul class="offer-deliverables">
+            <li>Audit des sources de données (ERP, Excel)</li>
+            <li>Identification des 5 KPI prioritaires</li>
+            <li>Feuille de route data personnalisée</li>
+            <li>Estimation du ROI et des délais</li>
+          </ul>
+          <a href="#contact" class="btn btn-outline" style="border-color:var(--color-primary);color:var(--color-primary);">Démarrer</a>
+        </div>
+        <div class="offer-card featured">
+          <div class="offer-featured-badge">Le plus populaire</div>
+          <div class="offer-icon">🚀</div>
+          <h3>Pilote Power BI</h3>
+          <div class="offer-duration">4 semaines</div>
+          <p>Déploiement d'un premier tableau de bord sur un périmètre ciblé (ex: Ventes Export) pour prouver la valeur rapidement.</p>
+          <ul class="offer-deliverables">
+            <li>Connexion à votre ERP ou fichiers Excel</li>
+            <li>Modèle de données Power BI opérationnel</li>
+            <li>1 dashboard interactif (3 à 5 pages)</li>
+            <li>Formation des utilisateurs clés</li>
+            <li>Support post-déploiement (1 mois)</li>
+          </ul>
+          <a href="#contact" class="btn btn-primary">Lancer le pilote</a>
+        </div>
+        <div class="offer-card">
+          <div class="offer-icon">🏗️</div>
+          <h3>Déploiement Fabric Complet</h3>
+          <div class="offer-duration">2 à 3 mois</div>
+          <p>Mise en place de l'architecture cible complète sur Microsoft Fabric et déploiement de l'ensemble des tableaux de bord.</p>
+          <ul class="offer-deliverables">
+            <li>Architecture Fabric (Lakehouse + Data Factory)</li>
+            <li>Modèle en étoile complet (Ventes, Stocks, Marges)</li>
+            <li>Suite complète de dashboards Power BI</li>
+            <li>Sécurité des accès (Row-Level Security)</li>
+            <li>Formation &amp; accompagnement au changement</li>
+          </ul>
+          <a href="#contact" class="btn btn-outline" style="border-color:var(--color-primary);color:var(--color-primary);">Nous contacter</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CTA
+  ============================================================ -->
+  <section class="cta-section" id="contact">
+    <div class="container">
+      <span class="section-label" style="color:var(--color-accent);">Prochaine étape</span>
+      <h2>Un atelier de cadrage gratuit de 2 heures</h2>
+      <p>Identifions ensemble vos 3 KPI prioritaires et estimons le ROI de votre projet Power BI / Fabric. Sans engagement, sans jargon technique.</p>
+      <div class="cta-actions">
+        <a href="mailto:stanislas.basquin@noah-consultant.fr" class="btn btn-accent">Envoyer un email</a>
+        <a href="https://www.linkedin.com/in/stanislas-basquin" class="btn btn-outline" target="_blank" rel="noopener">Contacter sur LinkedIn</a>
+      </div>
+      <p class="cta-note">Réponse garantie sous 24 heures ouvrées · Atelier en visioconférence ou en présentiel</p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="brand-name">Noah Consultant</div>
+          <div class="brand-tagline">Data & AI · Microsoft · Viticulture</div>
+        </div>
+        <ul class="footer-links">
+          <li><a href="#probleme">Enjeux</a></li>
+          <li><a href="#solution">Solution</a></li>
+          <li><a href="#cas-usage">Cas d'usage</a></li>
+          <li><a href="#offres">Offres</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+        <div class="footer-copy">© 2026 Noah Consultant — Stanislas BASQUIN</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+  <script>
+    // --- Burger menu ---
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    burger.addEventListener('click', () => {
+      burger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Close mobile menu when a link is clicked
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => {
+        burger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+      });
+    });
+
+    // --- Navbar scroll effect ---
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 40) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // --- Smooth reveal on scroll (Intersection Observer) ---
+    const revealElements = document.querySelectorAll(
+      '.pain-card, .kpi-card, .usecase-card, .offer-card, .process-step'
+    );
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.12 });
+
+    revealElements.forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
