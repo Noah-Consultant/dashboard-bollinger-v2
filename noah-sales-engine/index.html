@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noah Sales Engine 2026 — Noah Consultant</title>
+  <style>
+    /* ===== RESET & VARIABLES ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3350;
+      --accent: #4f8ef7;
+      --accent2: #7c5cfc;
+      --green: #22c55e;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --text-muted: #8892a4;
+      --radius: 10px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+    /* ===== HEADER ===== */
+    header {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .logo { font-size: 1.5rem; font-weight: 800; background: linear-gradient(90deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { font-size: 0.85rem; color: var(--text-muted); }
+    .badge { margin-left: auto; background: var(--accent2); color: #fff; font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+
+    /* ===== NAV TABS ===== */
+    nav { display: flex; gap: 4px; padding: 16px 32px 0; border-bottom: 1px solid var(--border); }
+    .tab-btn {
+      background: none; border: none; color: var(--text-muted); cursor: pointer;
+      padding: 10px 20px; font-size: 0.9rem; border-bottom: 2px solid transparent;
+      transition: all 0.2s; font-weight: 500;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ===== MAIN LAYOUT ===== */
+    main { padding: 28px 32px; max-width: 1200px; margin: 0 auto; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===== CARDS ===== */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--accent); }
+    .card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 10px; }
+
+    /* ===== FORM ELEMENTS ===== */
+    label { display: block; font-size: 0.82rem; color: var(--text-muted); margin-bottom: 5px; font-weight: 500; }
+    input[type=text], input[type=email], input[type=number], select, textarea {
+      width: 100%; background: var(--surface2); border: 1px solid var(--border);
+      color: var(--text); border-radius: 6px; padding: 9px 12px; font-size: 0.88rem;
+      outline: none; transition: border-color 0.2s; font-family: inherit;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .form-row.three { grid-template-columns: 1fr 1fr 1fr; }
+    .form-group { margin-bottom: 14px; }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 20px; border-radius: 6px; font-size: 0.88rem;
+      font-weight: 600; cursor: pointer; border: none; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { background: #3a7de8; }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-success { background: var(--green); color: #fff; }
+    .btn-danger { background: var(--red); color: #fff; font-size: 0.78rem; padding: 5px 12px; }
+    .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
+
+    /* ===== SCRIPT OUTPUT ===== */
+    .script-output {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; margin-top: 16px; white-space: pre-wrap; font-size: 0.85rem;
+      line-height: 1.7; color: var(--text); min-height: 120px;
+    }
+    .script-output strong { color: var(--accent); }
+    .copy-bar { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+
+    /* ===== PIPELINE / CRM ===== */
+    .pipeline-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .pipeline-col { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; min-height: 200px; }
+    .pipeline-col h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 10px; }
+    .lead-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+      padding: 10px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.2s;
+    }
+    .lead-card:hover { border-color: var(--accent); }
+    .lead-card .lead-name { font-size: 0.85rem; font-weight: 600; }
+    .lead-card .lead-company { font-size: 0.75rem; color: var(--text-muted); }
+    .lead-card .lead-persona { font-size: 0.7rem; padding: 2px 7px; border-radius: 10px; display: inline-block; margin-top: 4px; font-weight: 600; }
+    .persona-dsi { background: rgba(79,142,247,0.15); color: var(--accent); }
+    .persona-daf { background: rgba(124,92,252,0.15); color: var(--accent2); }
+    .persona-other { background: rgba(245,158,11,0.15); color: var(--yellow); }
+
+    /* ===== STATUS BADGES ===== */
+    .status { font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; display: inline-block; }
+    .status-cold { background: rgba(139,148,158,0.15); color: #8b949e; }
+    .status-contacted { background: rgba(79,142,247,0.15); color: var(--accent); }
+    .status-followup { background: rgba(245,158,11,0.15); color: var(--yellow); }
+    .status-rdv { background: rgba(124,92,252,0.15); color: var(--accent2); }
+    .status-proposal { background: rgba(34,197,94,0.2); color: var(--green); }
+    .status-won { background: rgba(34,197,94,0.3); color: #16a34a; }
+    .status-lost { background: rgba(239,68,68,0.15); color: var(--red); }
+
+    /* ===== KPI CARDS ===== */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
+    .kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; text-align: center; }
+    .kpi-value { font-size: 2rem; font-weight: 800; color: var(--accent); }
+    .kpi-label { font-size: 0.78rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* ===== TABLE ===== */
+    .leads-table { width: 100%; border-collapse: collapse; font-size: 0.83rem; }
+    .leads-table th { background: var(--surface2); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); }
+    .leads-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    .leads-table tr:hover td { background: var(--surface2); }
+    .leads-table tr:last-child td { border-bottom: none; }
+
+    /* ===== MODAL ===== */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow); }
+    .modal h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; color: var(--accent); }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    /* ===== SECTION TITLE ===== */
+    .section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 700px) {
+      main { padding: 16px; }
+      nav { padding: 12px 16px 0; overflow-x: auto; }
+      header { padding: 14px 16px; }
+      .form-row, .form-row.three { grid-template-columns: 1fr; }
+      .kpi-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">Noah Sales Engine</div>
+    <div class="subtitle">Consultant Data Analytics & AI — Microsoft Fabric · Power BI · Dataiku</div>
+  </div>
+  <div class="badge">2026</div>
+</header>
+
+<nav>
+  <button class="tab-btn active" onclick="switchTab('dashboard')">Dashboard</button>
+  <button class="tab-btn" onclick="switchTab('generator')">Générateur de Scripts</button>
+  <button class="tab-btn" onclick="switchTab('crm')">CRM Pipeline</button>
+  <button class="tab-btn" onclick="switchTab('qualification')">Script Qualification</button>
+</nav>
+
+<main>
+
+  <!-- ===== TAB 1 : DASHBOARD ===== -->
+  <div id="tab-dashboard" class="tab-panel active">
+    <div class="kpi-grid" id="kpi-grid"></div>
+    <div class="card">
+      <h2>Activité Récente</h2>
+      <table class="leads-table" id="recent-table">
+        <thead><tr>
+          <th>Prospect</th><th>Entreprise</th><th>Persona</th><th>Statut</th><th>Prochaine Action</th><th>Valeur (€)</th>
+        </tr></thead>
+        <tbody id="recent-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2 : GÉNÉRATEUR DE SCRIPTS ===== -->
+  <div id="tab-generator" class="tab-panel">
+    <div class="card">
+      <h2>Générateur de Messages de Prospection</h2>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Persona cible</label>
+          <select id="gen-persona" onchange="updateGenerator()">
+            <option value="dsi">DSI — Directeur des Systèmes d'Information</option>
+            <option value="daf">DAF — Directeur Administratif et Financier</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Canal</label>
+          <select id="gen-channel" onchange="updateGenerator()">
+            <option value="linkedin">LinkedIn</option>
+            <option value="email">Email</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row three">
+        <div class="form-group">
+          <label>Prénom du prospect</label>
+          <input type="text" id="gen-firstname" placeholder="ex: Marie" oninput="updateGenerator()" />
+        </div>
+        <div class="form-group">
+          <label>Nom de l'entreprise</label>
+          <input type="text" id="gen-company" placeholder="ex: Groupe Pernod Ricard" oninput="updateGenerator()" />
+        </div>
+        <div class="form-group">
+          <label>Étape de la séquence</label>
+          <select id="gen-step" onchange="updateGenerator()">
+            <option value="1">Message 1 — Connexion / Premier contact (J0)</option>
+            <option value="2">Message 2 — Suivi Email (J+3)</option>
+            <option value="3">Message 3 — Relance LinkedIn (J+7)</option>
+            <option value="4">Message 4 — Clôture (J+14)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Problème principal identifié (optionnel)</label>
+        <input type="text" id="gen-pain" placeholder="ex: lenteur des reportings financiers, silos de données..." oninput="updateGenerator()" />
+      </div>
+      <div class="script-output" id="gen-output">Remplissez les champs ci-dessus pour générer votre message personnalisé.</div>
+      <div class="copy-bar">
+        <button class="btn btn-secondary btn-sm" onclick="copyScript()">Copier le message</button>
+        <button class="btn btn-primary btn-sm" onclick="addToLeads()">Ajouter au CRM</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3 : CRM PIPELINE ===== -->
+  <div id="tab-crm" class="tab-panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <div class="section-title">Pipeline de Prospection</div>
+      <button class="btn btn-primary btn-sm" onclick="openAddModal()">+ Ajouter un Lead</button>
+    </div>
+    <div class="pipeline-grid" id="pipeline-grid"></div>
+    <div class="card" style="margin-top:0">
+      <h2>Liste complète des Leads</h2>
+      <table class="leads-table">
+        <thead><tr>
+          <th>Prospect</th><th>Entreprise</th><th>Persona</th><th>Statut</th><th>Prochaine Action</th><th>Valeur (€)</th><th>Actions</th>
+        </tr></thead>
+        <tbody id="crm-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4 : SCRIPT QUALIFICATION ===== -->
+  <div id="tab-qualification" class="tab-panel">
+    <div class="card">
+      <h2>Script de Qualification — Discovery Call (20 min)</h2>
+      <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:20px;">Utilisez ce script lors de vos appels de qualification pour évaluer rapidement le besoin, le budget et l'urgence (méthode BANT).</p>
+      <div id="qualification-script"></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ===== MODAL : AJOUTER / MODIFIER UN LEAD ===== -->
+<div class="modal-overlay" id="lead-modal">
+  <div class="modal">
+    <h3 id="modal-title">Ajouter un Lead</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Prénom</label>
+        <input type="text" id="m-firstname" placeholder="Prénom" />
+      </div>
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" id="m-lastname" placeholder="Nom" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Entreprise</label>
+        <input type="text" id="m-company" placeholder="Nom de l'entreprise" />
+      </div>
+      <div class="form-group">
+        <label>Persona</label>
+        <select id="m-persona">
+          <option value="DSI">DSI</option>
+          <option value="DAF">DAF</option>
+          <option value="CDO">CDO</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Statut</label>
+        <select id="m-status">
+          <option value="Lead Froid">Lead Froid</option>
+          <option value="Contacté">Contacté (J0)</option>
+          <option value="Relancé">Relancé (J+3/J+7)</option>
+          <option value="RDV Planifié">RDV Qualif Planifié</option>
+          <option value="Diagnostic Proposé">Diagnostic Proposé</option>
+          <option value="Gagné">Gagné</option>
+          <option value="Perdu">Perdu</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Canal privilégié</label>
+        <select id="m-channel">
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Email">Email</option>
+          <option value="Téléphone">Téléphone</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Prochaine action (date)</label>
+        <input type="text" id="m-nextaction" placeholder="ex: 2026-04-07" />
+      </div>
+      <div class="form-group">
+        <label>Valeur estimée (€ HT)</label>
+        <input type="number" id="m-value" placeholder="ex: 2500" />
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Lien LinkedIn</label>
+      <input type="text" id="m-linkedin" placeholder="https://linkedin.com/in/..." />
+    </div>
+    <div class="form-group">
+      <label>Notes / Contexte</label>
+      <textarea id="m-notes" placeholder="Informations clés, problèmes identifiés, prochaines étapes..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+      <button class="btn btn-primary" onclick="saveLead()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== DATA STORE =====
+let leads = JSON.parse(localStorage.getItem('noah_leads') || '[]');
+let editingIndex = -1;
+
+const STATUSES = ['Lead Froid','Contacté','Relancé','RDV Planifié','Diagnostic Proposé','Gagné','Perdu'];
+const STATUS_CLASS = {
+  'Lead Froid':'status-cold','Contacté':'status-contacted','Relancé':'status-followup',
+  'RDV Planifié':'status-rdv','Diagnostic Proposé':'status-proposal','Gagné':'status-won','Perdu':'status-lost'
+};
+
+function saveLeads() { localStorage.setItem('noah_leads', JSON.stringify(leads)); }
+
+// ===== DEMO DATA =====
+function initDemoData() {
+  if (leads.length === 0) {
+    leads = [
+      { firstname:'Sophie', lastname:'Martin', company:'Groupe Pernod Ricard', persona:'DSI', status:'RDV Planifié', channel:'LinkedIn', nextaction:'2026-04-07', value:5000, linkedin:'', notes:'Intéressée par migration Azure Fabric. Budget Q2 confirmé.' },
+      { firstname:'Julien', lastname:'Dupont', company:'Moët Hennessy', persona:'DAF', status:'Diagnostic Proposé', channel:'Email', nextaction:'2026-04-05', value:2500, linkedin:'', notes:'Problème de consolidation des reportings financiers. Proposition envoyée.' },
+      { firstname:'Claire', lastname:'Bernard', company:'Bacardi France', persona:'DSI', status:'Contacté', channel:'LinkedIn', nextaction:'2026-04-08', value:0, linkedin:'', notes:'Connexion acceptée. Email de suivi à envoyer.' },
+      { firstname:'Marc', lastname:'Leroy', company:'Rémy Cointreau', persona:'DAF', status:'Lead Froid', channel:'Email', nextaction:'2026-04-10', value:0, linkedin:'', notes:'Identifié via LinkedIn. Enjeux de prévision des ventes.' },
+      { firstname:'Isabelle', lastname:'Moreau', company:'Diageo France', persona:'CDO', status:'Gagné', channel:'Téléphone', nextaction:'', value:8000, linkedin:'', notes:'Mission Dataiku signée. Démarrage le 15/04.' },
+    ];
+    saveLeads();
+  }
+}
+initDemoData();
+
+// ===== TAB SWITCHING =====
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'crm') renderCRM();
+  if (name === 'qualification') renderQualification();
+  if (name === 'generator') updateGenerator();
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  const total = leads.length;
+  const active = leads.filter(l => !['Gagné','Perdu'].includes(l.status)).length;
+  const rdv = leads.filter(l => l.status === 'RDV Planifié').length;
+  const pipeline = leads.filter(l => l.status === 'Diagnostic Proposé').reduce((s,l) => s + (Number(l.value)||0), 0);
+  const won = leads.filter(l => l.status === 'Gagné').reduce((s,l) => s + (Number(l.value)||0), 0);
+
+  document.getElementById('kpi-grid').innerHTML = `
+    <div class="kpi-card"><div class="kpi-value">${total}</div><div class="kpi-label">Leads Total</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--accent2)">${active}</div><div class="kpi-label">Leads Actifs</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--yellow)">${rdv}</div><div class="kpi-label">RDV Planifiés</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:var(--green)">${pipeline.toLocaleString('fr-FR')} €</div><div class="kpi-label">Pipeline Actif</div></div>
+    <div class="kpi-card"><div class="kpi-value" style="color:#16a34a">${won.toLocaleString('fr-FR')} €</div><div class="kpi-label">Chiffre Gagné</div></div>
+  `;
+
+  const recent = [...leads].sort((a,b) => (b.nextaction||'').localeCompare(a.nextaction||'')).slice(0,10);
+  document.getElementById('recent-tbody').innerHTML = recent.map(l => `
+    <tr>
+      <td><strong>${l.firstname} ${l.lastname}</strong></td>
+      <td>${l.company}</td>
+      <td><span class="lead-persona persona-${l.persona.toLowerCase()}">${l.persona}</span></td>
+      <td><span class="status ${STATUS_CLASS[l.status]||''}">${l.status}</span></td>
+      <td>${l.nextaction || '—'}</td>
+      <td>${l.value ? l.value.toLocaleString('fr-FR') + ' €' : '—'}</td>
+    </tr>
+  `).join('');
+}
+renderDashboard();
+
+// ===== CRM =====
+function renderCRM() {
+  // Pipeline columns
+  const grid = document.getElementById('pipeline-grid');
+  grid.innerHTML = STATUSES.map(s => {
+    const cards = leads.filter(l => l.status === s).map(l => `
+      <div class="lead-card" onclick="editLead(${leads.indexOf(l)})">
+        <div class="lead-name">${l.firstname} ${l.lastname}</div>
+        <div class="lead-company">${l.company}</div>
+        <span class="lead-persona persona-${l.persona.toLowerCase()}">${l.persona}</span>
+      </div>
+    `).join('');
+    return `<div class="pipeline-col"><h4>${s}</h4>${cards || '<div style="color:var(--text-muted);font-size:0.75rem;">Aucun lead</div>'}</div>`;
+  }).join('');
+
+  // Table
+  document.getElementById('crm-tbody').innerHTML = leads.map((l,i) => `
+    <tr>
+      <td><strong>${l.firstname} ${l.lastname}</strong></td>
+      <td>${l.company}</td>
+      <td><span class="lead-persona persona-${l.persona.toLowerCase()}">${l.persona}</span></td>
+      <td><span class="status ${STATUS_CLASS[l.status]||''}">${l.status}</span></td>
+      <td>${l.nextaction || '—'}</td>
+      <td>${l.value ? l.value.toLocaleString('fr-FR') + ' €' : '—'}</td>
+      <td>
+        <button class="btn btn-secondary btn-sm" onclick="editLead(${i})">Éditer</button>
+        <button class="btn btn-danger" onclick="deleteLead(${i})">Suppr.</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openAddModal() {
+  editingIndex = -1;
+  document.getElementById('modal-title').textContent = 'Ajouter un Lead';
+  ['m-firstname','m-lastname','m-company','m-linkedin','m-notes','m-nextaction'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('m-value').value = '';
+  document.getElementById('m-persona').value = 'DSI';
+  document.getElementById('m-status').value = 'Lead Froid';
+  document.getElementById('m-channel').value = 'LinkedIn';
+  document.getElementById('lead-modal').classList.add('open');
+}
+
+function editLead(i) {
+  editingIndex = i;
+  const l = leads[i];
+  document.getElementById('modal-title').textContent = 'Modifier le Lead';
+  document.getElementById('m-firstname').value = l.firstname;
+  document.getElementById('m-lastname').value = l.lastname;
+  document.getElementById('m-company').value = l.company;
+  document.getElementById('m-persona').value = l.persona;
+  document.getElementById('m-status').value = l.status;
+  document.getElementById('m-channel').value = l.channel;
+  document.getElementById('m-nextaction').value = l.nextaction;
+  document.getElementById('m-value').value = l.value || '';
+  document.getElementById('m-linkedin').value = l.linkedin || '';
+  document.getElementById('m-notes').value = l.notes || '';
+  document.getElementById('lead-modal').classList.add('open');
+}
+
+function saveLead() {
+  const lead = {
+    firstname: document.getElementById('m-firstname').value.trim(),
+    lastname: document.getElementById('m-lastname').value.trim(),
+    company: document.getElementById('m-company').value.trim(),
+    persona: document.getElementById('m-persona').value,
+    status: document.getElementById('m-status').value,
+    channel: document.getElementById('m-channel').value,
+    nextaction: document.getElementById('m-nextaction').value.trim(),
+    value: Number(document.getElementById('m-value').value) || 0,
+    linkedin: document.getElementById('m-linkedin').value.trim(),
+    notes: document.getElementById('m-notes').value.trim(),
+  };
+  if (!lead.firstname || !lead.company) { alert('Prénom et entreprise sont requis.'); return; }
+  if (editingIndex >= 0) leads[editingIndex] = lead;
+  else leads.push(lead);
+  saveLeads();
+  closeModal();
+  renderCRM();
+  renderDashboard();
+}
+
+function deleteLead(i) {
+  if (!confirm('Supprimer ce lead ?')) return;
+  leads.splice(i, 1);
+  saveLeads();
+  renderCRM();
+  renderDashboard();
+}
+
+function closeModal() { document.getElementById('lead-modal').classList.remove('open'); }
+
+// ===== SCRIPT GENERATOR =====
+const SCRIPTS = {
+  dsi: {
+    linkedin: {
+      1: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nJe suis de près les initiatives de ${co || '[Entreprise]'} en matière de transformation numérique. En tant que consultant spécialisé sur la stack Microsoft (Fabric, Power BI) et Dataiku, j'accompagne les DSI dans la rationalisation de leur architecture de données et l'intégration de l'IA générative en toute sécurité.\n\nAu plaisir d'échanger sur vos enjeux d'efficience technique.\n\nBien à vous,\nStanislas BASQUIN`,
+      2: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nSuite à ma demande de connexion, je me permets de vous relancer. Avec l'émergence de Microsoft Fabric et les nouvelles capacités d'IA générative, il est désormais possible de consolider les environnements analytiques tout en renforçant la gouvernance.\n\n${pain ? `J'ai noté que ${pain} est un enjeu fréquent pour les DSI de votre secteur.` : 'De nombreuses DSI cherchent à rationaliser leur stack et réduire la dette technique.'}\n\nSeriez-vous disponible pour un échange de 15 minutes ?\n\nBien à vous,\nStanislas BASQUIN`,
+      3: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nJe me permets de vous relancer une dernière fois. Je partage quelques retours d'expérience sur l'intégration de Dataiku avec les environnements Azure pour accélérer le déploiement de modèles prédictifs sans compromettre la sécurité.\n\nSi le sujet n'est pas prioritaire, n'hésitez pas à me le faire savoir.\n\nBonne journée,\nStanislas BASQUIN`,
+      4: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nN'ayant pas eu de retour, je clos ma démarche. Je reste disponible si vos priorités évoluent autour de la modernisation de votre architecture Data.\n\nBonne continuation,\nStanislas BASQUIN`,
+    },
+    email: {
+      1: (fn, co, pain) => `Objet : Rationalisation de votre stack Data avec Microsoft Fabric\n\nBonjour ${fn || '[Prénom]'},\n\nJe me permets de vous contacter car j'accompagne des DSI dans la modernisation de leur architecture de données avec Microsoft Fabric et Dataiku.\n\n${pain ? `La problématique de "${pain}" est au cœur des enjeux que je traite.` : 'Les enjeux de gouvernance, de performance et de réduction de la dette technique sont au cœur de mon expertise.'}\n\nSeriez-vous disponible pour un échange de 15 minutes la semaine prochaine ?\n\nCordialement,\nStanislas BASQUIN\nConsultant Data Analytics & AI`,
+      2: (fn, co, pain) => `Objet : Re : Rationalisation de votre stack Data\n\nBonjour ${fn || '[Prénom]'},\n\nFaisant suite à mon précédent email, j'aimerais partager un cas concret : j'ai récemment aidé une entreprise à réduire ses coûts d'infrastructure de 20% grâce à une migration optimisée vers Microsoft Fabric.\n\nCela pourrait-il vous intéresser ?\n\nCordialement,\nStanislas BASQUIN`,
+      3: (fn, co, pain) => `Objet : Dernière relance — Architecture Data & AI\n\nBonjour ${fn || '[Prénom]'},\n\nJe me permets une dernière relance. Si la modernisation de votre architecture Data n'est pas prioritaire, je comprendrai tout à fait.\n\nDans le cas contraire, je propose un Diagnostic Flash de 2 jours pour évaluer votre situation et identifier des Quick Wins concrets.\n\nBonne journée,\nStanislas BASQUIN`,
+      4: (fn, co, pain) => `Objet : Clôture de ma démarche — Ressources Data & AI\n\nBonjour ${fn || '[Prénom]'},\n\nJe clos ma démarche. N'hésitez pas à me recontacter si vos priorités évoluent autour de la gouvernance des données ou de l'intégration de l'IA générative.\n\nBien à vous,\nStanislas BASQUIN`,
+    }
+  },
+  daf: {
+    linkedin: {
+      1: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nEn tant que consultant Data Analytics, j'aide les directions financières à fiabiliser leurs reportings et à automatiser leurs processus de prévision grâce à Power BI et Dataiku.\n\nJ'aimerais beaucoup suivre l'actualité de ${co || '[Entreprise]'} et échanger sur les leviers de performance pilotés par la donnée.\n\nBien à vous,\nStanislas BASQUIN`,
+      2: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nSuite à mon invitation, je me permets de vous relancer. ${pain ? `La problématique de "${pain}" est un enjeu que je rencontre fréquemment.` : 'De nombreux DAF perdent un temps précieux à consolider des données financières éparpillées.'}\n\nEn exploitant Power BI et Dataiku, il est possible d'automatiser vos tableaux de bord et d'améliorer la précision de vos prévisions.\n\nSeriez-vous disponible pour un échange de 15 minutes ?\n\nBien à vous,\nStanislas BASQUIN`,
+      3: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nL'intégration de l'IA générative dans Power BI (Copilot) transforme la façon dont les directions financières interagissent avec leurs données. Seriez-vous ouvert à une rapide démonstration ?\n\nBonne journée,\nStanislas BASQUIN`,
+      4: (fn, co, pain) => `Bonjour ${fn || '[Prénom]'},\n\nN'ayant pas eu de retour, je clos ma démarche. Si l'optimisation de votre pilotage financier redevient d'actualité, sachez que je propose des Diagnostics Flash pour évaluer rapidement le potentiel de vos données.\n\nBonne continuation,\nStanislas BASQUIN`,
+    },
+    email: {
+      1: (fn, co, pain) => `Objet : Fiabilisez vos reportings et accélérez vos clôtures\n\nBonjour ${fn || '[Prénom]'},\n\nJe me permets de vous contacter car j'accompagne des directions financières dans l'optimisation de leurs processus de reporting avec Power BI et Dataiku.\n\n${pain ? `La problématique de "${pain}" est au cœur de mon expertise.` : 'Automatisation des tableaux de bord, prévisions de trésorerie en temps réel, réduction des délais de clôture : voilà les bénéfices concrets que j\'apporte.'}\n\nSeriez-vous disponible pour un échange de 15 minutes ?\n\nCordialement,\nStanislas BASQUIN\nConsultant Data Analytics & AI`,
+      2: (fn, co, pain) => `Objet : Re : Pilotage financier & Data Analytics\n\nBonjour ${fn || '[Prénom]'},\n\nFaisant suite à mon précédent email, je souhaitais partager qu'avec Copilot intégré à Power BI, les équipes financières peuvent désormais interroger leurs données en langage naturel et obtenir des insights instantanés.\n\nCela vous intéresse-t-il ?\n\nCordialement,\nStanislas BASQUIN`,
+      3: (fn, co, pain) => `Objet : Dernière relance — ROI & Pilotage de la performance\n\nBonjour ${fn || '[Prénom]'},\n\nDernière relance de ma part. Je propose un Diagnostic Flash de 2 jours pour évaluer le potentiel de vos données financières et identifier des Quick Wins concrets.\n\nBonne journée,\nStanislas BASQUIN`,
+      4: (fn, co, pain) => `Objet : Fin de mes relances — Pilotage de la performance\n\nBonjour ${fn || '[Prénom]'},\n\nJe ne vous solliciterai plus. Si le sujet redevient d'actualité, n'hésitez pas à me recontacter.\n\nBonne continuation,\nStanislas BASQUIN`,
+    }
+  }
+};
+
+function updateGenerator() {
+  const persona = document.getElementById('gen-persona').value;
+  const channel = document.getElementById('gen-channel').value;
+  const step = parseInt(document.getElementById('gen-step').value);
+  const fn = document.getElementById('gen-firstname').value.trim();
+  const co = document.getElementById('gen-company').value.trim();
+  const pain = document.getElementById('gen-pain').value.trim();
+  const text = SCRIPTS[persona][channel][step](fn, co, pain);
+  document.getElementById('gen-output').textContent = text;
+}
+updateGenerator();
+
+function copyScript() {
+  const text = document.getElementById('gen-output').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copié !';
+    setTimeout(() => btn.textContent = 'Copier le message', 1500);
+  });
+}
+
+function addToLeads() {
+  const fn = document.getElementById('gen-firstname').value.trim();
+  const co = document.getElementById('gen-company').value.trim();
+  const persona = document.getElementById('gen-persona').value.toUpperCase();
+  if (!fn || !co) { alert('Renseignez le prénom et l\'entreprise pour ajouter au CRM.'); return; }
+  leads.push({ firstname: fn, lastname: '', company: co, persona: persona === 'DSI' ? 'DSI' : 'DAF', status: 'Contacté', channel: document.getElementById('gen-channel').value === 'linkedin' ? 'LinkedIn' : 'Email', nextaction: '', value: 0, linkedin: '', notes: '' });
+  saveLeads();
+  alert(`${fn} (${co}) ajouté au CRM avec succès !`);
+}
+
+// ===== QUALIFICATION SCRIPT =====
+function renderQualification() {
+  const sections = [
+    { title: 'Introduction (2 min)', color: 'var(--accent)', items: [
+      '"Bonjour [Prénom], merci pour votre temps. L\'objectif de cet appel de 20 minutes est de comprendre vos enjeux actuels autour de la donnée et de voir si mon expertise sur la stack Microsoft et Dataiku peut vous être utile. Est-ce que cela vous convient ?"'
+    ]},
+    { title: 'Contexte & Enjeux (Need)', color: 'var(--accent2)', items: [
+      'Q1 : "Aujourd\'hui, quel est le principal défi que vous rencontrez avec vos données (lenteur des reportings, silos de données, manque de fiabilité) ?"',
+      'Q2 : "Comment ce problème impacte-t-il concrètement votre activité au quotidien (perte de temps, mauvaises décisions) ?"'
+    ]},
+    { title: 'Stack Technique Actuelle', color: 'var(--yellow)', items: [
+      'Q3 : "Quels outils utilisez-vous actuellement pour le stockage, la transformation et la visualisation de vos données ?"',
+      'Q4 : "Avez-vous déjà initié une réflexion autour de Microsoft Fabric ou de l\'intégration de l\'IA générative dans vos processus ?"'
+    ]},
+    { title: 'Projet & Objectifs', color: 'var(--green)', items: [
+      'Q5 : "Si nous devions collaborer, quel serait le critère de succès numéro 1 pour vous d\'ici 3 à 6 mois ?"',
+      'Q6 : "Avez-vous des cas d\'usage spécifiques en tête pour Dataiku (ex: prévision des ventes, segmentation client) ?"'
+    ]},
+    { title: 'Processus de Décision (Authority & Timeline)', color: 'var(--accent)', items: [
+      'Q7 : "Qui d\'autre est impliqué dans les choix d\'architecture ou d\'outils Data au sein de votre organisation ?"',
+      'Q8 : "Quelle est votre échéance idéale pour résoudre ce problème ou déployer cette nouvelle solution ?"'
+    ]},
+    { title: 'Budget & Engagement (Budget)', color: 'var(--accent2)', items: [
+      'Q9 : "Avez-vous déjà alloué un budget pour cette initiative d\'optimisation Data/AI cette année ?"',
+      'Q10 : "Seriez-vous ouvert à une approche itérative, en commençant par un Diagnostic Flash de 2 jours pour valider la faisabilité et le ROI ?"'
+    ]},
+    { title: 'Conclusion & Next Steps (3 min)', color: 'var(--green)', items: [
+      '"Merci pour ces éléments très clairs. Au vu de ce que vous me dites, je pense que nous pourrions commencer par [Action proposée, ex: un Diagnostic Flash]. Je vous envoie une proposition détaillée d\'ici ce soir. Avez-vous des questions ?"'
+    ]},
+  ];
+
+  document.getElementById('qualification-script').innerHTML = sections.map(s => `
+    <div style="margin-bottom:18px; padding:16px; background:var(--surface2); border-left:3px solid ${s.color}; border-radius:0 8px 8px 0;">
+      <div style="font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; color:${s.color}; margin-bottom:10px;">${s.title}</div>
+      ${s.items.map(q => `<div style="font-size:0.86rem; color:var(--text); margin-bottom:8px; padding:8px 12px; background:var(--surface); border-radius:6px; line-height:1.6;">${q}</div>`).join('')}
+    </div>
+  `).join('');
+}
+
+// Close modal on overlay click
+document.getElementById('lead-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
