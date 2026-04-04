@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Noah Sales Engine 2026 — Noah Consultant</title>
+  <style>
+    /* ===================== RESET & VARIABLES ===================== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #22263a;
+      --border: #2e3250;
+      --accent: #4f7cff;
+      --accent2: #7c5cff;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --text: #e2e8f0;
+      --muted: #8892a4;
+      --radius: 12px;
+      --shadow: 0 4px 24px rgba(0,0,0,0.4);
+    }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ===================== HEADER ===================== */
+    header {
+      background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 18px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-icon {
+      width: 42px; height: 42px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: #fff;
+    }
+    .logo-text h1 { font-size: 18px; font-weight: 700; color: var(--text); }
+    .logo-text p { font-size: 12px; color: var(--muted); }
+    .header-badge {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 6px 14px;
+      font-size: 12px; color: var(--muted);
+    }
+    .header-badge span { color: var(--accent); font-weight: 600; }
+
+    /* ===================== NAV TABS ===================== */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      display: flex; gap: 4px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 14px 20px;
+      background: transparent;
+      border: none; border-bottom: 3px solid transparent;
+      color: var(--muted); font-size: 14px; font-weight: 500;
+      cursor: pointer; white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ===================== MAIN LAYOUT ===================== */
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ===================== CARDS ===================== */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-title {
+      font-size: 16px; font-weight: 700; color: var(--text);
+      margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .card-title .icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+
+    /* ===================== FORMS ===================== */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-group input, .form-group select, .form-group textarea {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px;
+      color: var(--text); font-size: 14px;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      outline: none; border-color: var(--accent);
+    }
+    .form-group select option { background: var(--surface2); }
+
+    /* ===================== BUTTONS ===================== */
+    .btn {
+      padding: 11px 22px; border: none; border-radius: 8px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: all 0.2s; display: inline-flex; align-items: center; gap: 7px;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; }
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-secondary { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-danger { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: var(--red); }
+    .btn-danger:hover { background: rgba(239,68,68,0.25); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+    /* ===================== OUTPUT SCRIPT ===================== */
+    .script-output {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: var(--radius); padding: 20px;
+      margin-top: 20px; display: none;
+    }
+    .script-output.visible { display: block; }
+    .script-output h4 { font-size: 13px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+    .script-output .message-block {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 14px; margin-bottom: 10px;
+    }
+    .script-output .message-block .msg-label {
+      font-size: 11px; font-weight: 700; color: var(--accent2);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px;
+    }
+    .script-output .message-block p { font-size: 14px; line-height: 1.6; color: var(--text); }
+    .copy-btn { margin-top: 12px; }
+
+    /* ===================== SEQUENCE TABS ===================== */
+    .seq-tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+    .seq-tab {
+      padding: 7px 14px; border-radius: 20px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); font-size: 13px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .seq-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+    /* ===================== PIPELINE KANBAN ===================== */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      overflow-x: auto;
+    }
+    @media(max-width: 800px) { .kanban-board { grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width: 480px) { .kanban-board { grid-template-columns: 1fr; } }
+    .kanban-col {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px; min-height: 200px;
+    }
+    .kanban-col-header {
+      font-size: 12px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .kanban-badge {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 2px 8px; font-size: 11px; color: var(--muted);
+    }
+    .kanban-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px; margin-bottom: 8px;
+      cursor: pointer; transition: border-color 0.2s;
+    }
+    .kanban-card:hover { border-color: var(--accent); }
+    .kanban-card .kc-name { font-size: 13px; font-weight: 600; color: var(--text); }
+    .kanban-card .kc-company { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .kanban-card .kc-amount { font-size: 12px; color: var(--green); margin-top: 6px; font-weight: 600; }
+    .kanban-card .kc-role {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 7px; border-radius: 10px; margin-top: 6px;
+      text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .kc-role.dsi { background: rgba(79,124,255,0.15); color: var(--accent); }
+    .kc-role.daf { background: rgba(124,92,255,0.15); color: var(--accent2); }
+
+    /* ===================== STATS ===================== */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    @media(max-width: 700px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 18px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .stat-card .stat-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .stat-card .stat-value { font-size: 28px; font-weight: 800; color: var(--text); }
+    .stat-card .stat-sub { font-size: 12px; color: var(--muted); }
+
+    /* ===================== TABLE ===================== */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      background: var(--surface2); padding: 10px 14px;
+      text-align: left; font-size: 11px; font-weight: 700;
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
+    tbody tr:hover { background: var(--surface2); }
+    tbody td { padding: 11px 14px; color: var(--text); }
+    .status-badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px;
+    }
+    .status-nouveau { background: rgba(148,163,184,0.15); color: #94a3b8; }
+    .status-contacte { background: rgba(79,124,255,0.15); color: var(--accent); }
+    .status-qualifie { background: rgba(245,158,11,0.15); color: var(--orange); }
+    .status-negocia { background: rgba(124,92,255,0.15); color: var(--accent2); }
+    .status-gagne { background: rgba(34,197,94,0.15); color: var(--green); }
+    .status-perdu { background: rgba(239,68,68,0.15); color: var(--red); }
+
+    /* ===================== MODAL ===================== */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6); z-index: 100;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      width: 100%; max-width: 520px; max-height: 90vh;
+      overflow-y: auto; box-shadow: var(--shadow);
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .modal-header h3 { font-size: 16px; font-weight: 700; }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 20px; cursor: pointer; }
+    .modal-close:hover { color: var(--text); }
+
+    /* ===================== TOAST ===================== */
+    #toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--green); color: #fff;
+      padding: 12px 20px; border-radius: 8px;
+      font-size: 13px; font-weight: 600;
+      opacity: 0; transform: translateY(10px);
+      transition: all 0.3s; pointer-events: none; z-index: 200;
+    }
+    #toast.show { opacity: 1; transform: translateY(0); }
+
+    /* ===================== MISC ===================== */
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+    }
+    .section-title { font-size: 20px; font-weight: 800; color: var(--text); }
+    .section-sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+    .empty-state { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 10px; }
+    .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  </style>
+</head>
+<body>
+
+<!-- ==================== HEADER ==================== -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">N</div>
+    <div class="logo-text">
+      <h1>Noah Sales Engine 2026</h1>
+      <p>Prospection & CRM — Noah Consultant</p>
+    </div>
+  </div>
+  <div class="header-badge">MANUS-20260404 — <span>Stanislas BASQUIN</span></div>
+</header>
+
+<!-- ==================== NAV ==================== -->
+<nav>
+  <button class="tab-btn active" onclick="switchTab('generator')">🚀 Générateur de Scripts</button>
+  <button class="tab-btn" onclick="switchTab('pipeline')">📊 Pipeline CRM</button>
+  <button class="tab-btn" onclick="switchTab('leads')">👥 Leads & Contacts</button>
+  <button class="tab-btn" onclick="switchTab('playbook')">📖 Playbook</button>
+</nav>
+
+<main>
+
+  <!-- ==================== TAB 1: GENERATOR ==================== -->
+  <div id="tab-generator" class="tab-panel active">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Générateur de Scripts de Prospection</div>
+        <div class="section-sub">Personnalisez vos messages LinkedIn et Email en quelques secondes.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><div class="icon">✍️</div> Paramètres du Script</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Cible</label>
+          <select id="gen-cible" onchange="updateGeneratorPreview()">
+            <option value="dsi">DSI — Efficience technique</option>
+            <option value="daf">DAF — ROI / Pilotage</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Canal</label>
+          <select id="gen-canal" onchange="updateGeneratorPreview()">
+            <option value="linkedin">LinkedIn</option>
+            <option value="email">Email</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Prénom du prospect</label>
+          <input type="text" id="gen-prenom" placeholder="Ex: Marie" oninput="updateGeneratorPreview()" />
+        </div>
+        <div class="form-group">
+          <label>Entreprise</label>
+          <input type="text" id="gen-entreprise" placeholder="Ex: Acme Corp" oninput="updateGeneratorPreview()" />
+        </div>
+        <div class="form-group">
+          <label>Secteur</label>
+          <select id="gen-secteur" onchange="updateGeneratorPreview()">
+            <option value="industrie">Industrie</option>
+            <option value="finance">Finance / Banque</option>
+            <option value="retail">Retail / Distribution</option>
+            <option value="sante">Santé</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Numéro du message</label>
+          <select id="gen-step" onchange="updateGeneratorPreview()">
+            <option value="1">Message 1 — Connexion / Premier contact</option>
+            <option value="2">Message 2 — Relance Valeur (J+3)</option>
+            <option value="3">Message 3 — Hook Actualité IA (J+10)</option>
+            <option value="4">Message 4 — Break-up (J+21)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex-row" style="margin-top: 20px;">
+        <button class="btn btn-primary" onclick="generateScript()">⚡ Générer le Script</button>
+        <button class="btn btn-secondary" onclick="addToLeads()">➕ Ajouter au CRM</button>
+      </div>
+    </div>
+
+    <div class="script-output" id="script-output">
+      <h4 id="script-output-label">Script Généré</h4>
+      <div id="script-content"></div>
+      <div class="flex-row copy-btn">
+        <button class="btn btn-secondary btn-sm" onclick="copyScript()">📋 Copier le texte</button>
+        <button class="btn btn-secondary btn-sm" onclick="generateAllSteps()">📄 Générer la séquence complète</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 2: PIPELINE ==================== -->
+  <div id="tab-pipeline" class="tab-panel">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Pipeline Commercial</div>
+        <div class="section-sub">Vue Kanban de vos opportunités en cours.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-add-deal')">+ Nouvelle opportunité</button>
+    </div>
+
+    <div class="stats-grid" id="pipeline-stats"></div>
+
+    <div class="kanban-board" id="kanban-board"></div>
+  </div>
+
+  <!-- ==================== TAB 3: LEADS ==================== -->
+  <div id="tab-leads" class="tab-panel">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Leads & Contacts</div>
+        <div class="section-sub">Suivi de tous vos contacts prospectés.</div>
+      </div>
+      <button class="btn btn-primary" onclick="openModal('modal-add-lead')">+ Nouveau contact</button>
+    </div>
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Entreprise</th>
+              <th>Rôle</th>
+              <th>Source</th>
+              <th>Statut</th>
+              <th>Prochaine action</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leads-table-body"></tbody>
+        </table>
+        <div class="empty-state" id="leads-empty" style="display:none;">
+          <div class="empty-icon">👥</div>
+          <p>Aucun contact pour l'instant. Ajoutez votre premier lead !</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB 4: PLAYBOOK ==================== -->
+  <div id="tab-playbook" class="tab-panel">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Playbook de Prospection</div>
+        <div class="section-sub">Référence des séquences complètes DSI & DAF.</div>
+      </div>
+    </div>
+
+    <div class="seq-tabs">
+      <button class="seq-tab active" onclick="switchSeqTab('dsi-linkedin')">DSI — LinkedIn</button>
+      <button class="seq-tab" onclick="switchSeqTab('dsi-email')">DSI — Email</button>
+      <button class="seq-tab" onclick="switchSeqTab('daf-linkedin')">DAF — LinkedIn</button>
+      <button class="seq-tab" onclick="switchSeqTab('daf-email')">DAF — Email</button>
+    </div>
+
+    <div id="playbook-content"></div>
+  </div>
+
+</main>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Modal Add Lead -->
+<div class="modal-overlay" id="modal-add-lead">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Nouveau Contact</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-lead')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Prénom</label>
+        <input type="text" id="lead-prenom" placeholder="Marie" />
+      </div>
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" id="lead-nom" placeholder="Dupont" />
+      </div>
+      <div class="form-group">
+        <label>Entreprise</label>
+        <input type="text" id="lead-entreprise" placeholder="Acme Corp" />
+      </div>
+      <div class="form-group">
+        <label>Rôle</label>
+        <select id="lead-role">
+          <option value="DSI">DSI</option>
+          <option value="DAF">DAF</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Source</label>
+        <select id="lead-source">
+          <option value="LinkedIn">LinkedIn</option>
+          <option value="Email">Email</option>
+          <option value="Événement">Événement</option>
+          <option value="Recommandation">Recommandation</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Statut</label>
+        <select id="lead-statut">
+          <option value="Nouveau">Nouveau</option>
+          <option value="Contacté">Contacté</option>
+          <option value="Qualifié">Qualifié</option>
+          <option value="Négociation">Négociation</option>
+          <option value="Gagné">Gagné</option>
+          <option value="Perdu">Perdu</option>
+        </select>
+      </div>
+      <div class="form-group" style="grid-column: 1/-1;">
+        <label>Prochaine action</label>
+        <input type="text" id="lead-action" placeholder="Ex: Relance LinkedIn J+3" />
+      </div>
+    </div>
+    <div class="flex-row" style="margin-top: 20px;">
+      <button class="btn btn-primary" onclick="saveLead()">Enregistrer</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-lead')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Add Deal -->
+<div class="modal-overlay" id="modal-add-deal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Nouvelle Opportunité</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-deal')">✕</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group" style="grid-column: 1/-1;">
+        <label>Nom de l'opportunité</label>
+        <input type="text" id="deal-nom" placeholder="Ex: Audit Dataiku — Acme Corp" />
+      </div>
+      <div class="form-group">
+        <label>Entreprise</label>
+        <input type="text" id="deal-entreprise" placeholder="Acme Corp" />
+      </div>
+      <div class="form-group">
+        <label>Contact principal</label>
+        <input type="text" id="deal-contact" placeholder="Marie Dupont" />
+      </div>
+      <div class="form-group">
+        <label>Montant estimé (€)</label>
+        <input type="number" id="deal-montant" placeholder="1950" />
+      </div>
+      <div class="form-group">
+        <label>Probabilité (%)</label>
+        <input type="number" id="deal-proba" placeholder="50" min="0" max="100" />
+      </div>
+      <div class="form-group">
+        <label>Étape du pipeline</label>
+        <select id="deal-etape">
+          <option value="Diagnostic Flash">Diagnostic Flash</option>
+          <option value="Proposition">Proposition</option>
+          <option value="Négociation">Négociation</option>
+          <option value="Signature">Signature</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Rôle du contact</label>
+        <select id="deal-role">
+          <option value="dsi">DSI</option>
+          <option value="daf">DAF</option>
+        </select>
+      </div>
+    </div>
+    <div class="flex-row" style="margin-top: 20px;">
+      <button class="btn btn-primary" onclick="saveDeal()">Enregistrer</button>
+      <button class="btn btn-secondary" onclick="closeModal('modal-add-deal')">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ===================== DATA STORE =====================
+let leads = JSON.parse(localStorage.getItem('noah_leads') || '[]');
+let deals = JSON.parse(localStorage.getItem('noah_deals') || '[]');
+
+function saveData() {
+  localStorage.setItem('noah_leads', JSON.stringify(leads));
+  localStorage.setItem('noah_deals', JSON.stringify(deals));
+}
+
+// ===================== TABS =====================
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  if (id === 'pipeline') renderPipeline();
+  if (id === 'leads') renderLeads();
+  if (id === 'playbook') renderPlaybook('dsi-linkedin');
+}
+
+// ===================== TOAST =====================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===================== MODALS =====================
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
+});
+
+// ===================== SCRIPT DATA =====================
+const scripts = {
+  dsi: {
+    linkedin: [
+      { label: "Message 1 — Connexion (J+0)", text: (p, e) => `Bonjour ${p}, en tant que DSI chez ${e}, comment gérez-vous l'intégration de vos flux Dataiku avec le nouvel écosystème Microsoft Fabric ? J'accompagne les DSI sur ces enjeux d'efficience technique et de modernisation. Au plaisir d'échanger.` },
+      { label: "Message 2 — Relance Valeur (J+3)", text: (p, e) => `Merci pour la connexion, ${p}. J'ai récemment aidé une structure similaire à réduire ses temps de traitement de 40% en optimisant son architecture Dataiku sur Azure. Seriez-vous ouvert à un Diagnostic Flash de 20 min pour évaluer vos pipelines actuels chez ${e} ?` },
+      { label: "Message 3 — Hook IA Générative (J+10)", text: (p, e) => `Bonjour ${p}, avec l'intégration croissante de l'IA générative en entreprise, la gouvernance des données devient critique. Avez-vous commencé à explorer les capacités de Microsoft Fabric pour unifier vos données chez ${e} et préparer le terrain pour l'IA ?` },
+      { label: "Message 4 — Break-up (J+21)", text: (p, e) => `Bonjour ${p}, je comprends que ce n'est peut-être pas le bon moment pour revoir votre architecture Data chez ${e}. Je reste à votre disposition si le sujet de l'efficience technique (Dataiku/Fabric) redevient prioritaire. Bonne continuation !` }
+    ],
+    email: [
+      { label: "Email 1 — Premier contact (J+0)", subject: (p, e) => `Optimisation de votre architecture Dataiku / Microsoft Fabric`, text: (p, e) => `Bonjour ${p},\n\nLa rationalisation des coûts d'infrastructure et l'efficience des pipelines de données sont au cœur des préoccupations des DSI. Chez Noah Consultant, nous avons développé une approche Lean pour moderniser les architectures Data chez ${e}.\n\nSeriez-vous disponible pour un échange de 15 minutes la semaine prochaine ?\n\nBien cordialement,\nStanislas BASQUIN — Noah Consultant` },
+      { label: "Email 2 — Relance (J+5)", subject: (p, e) => `Re: Optimisation de votre architecture Dataiku / Microsoft Fabric`, text: (p, e) => `Bonjour ${p},\n\nJe me permets de relancer mon précédent email. Avez-vous pu y jeter un œil ?\n\nNous avons récemment permis à un client de réduire sa dette technique de 30% en migrant vers Microsoft Fabric.\n\nUn échange rapide vous intéresserait-il ?\n\nBien cordialement,\nStanislas BASQUIN — Noah Consultant` },
+      { label: "Email 3 — Hook IA (J+14)", subject: (p, e) => `L'IA générative et votre gouvernance des données chez ${e}`, text: (p, e) => `Bonjour ${p},\n\nL'adoption de l'IA générative nécessite une fondation de données solide. Avez-vous évalué comment Microsoft Fabric peut simplifier cette transition pour ${e} ?\n\nJe serais ravi d'en discuter lors d'un Diagnostic Flash de 20 minutes.\n\nBien cordialement,\nStanislas BASQUIN — Noah Consultant` },
+      { label: "Email 4 — Break-up (J+30)", subject: (p, e) => `Fin de mes relances — Efficience Data`, text: (p, e) => `Bonjour ${p},\n\nN'ayant pas eu de retour, je suppose que l'optimisation de votre stack Data n'est pas une priorité actuelle chez ${e}. N'hésitez pas à me recontacter si le besoin se fait sentir.\n\nBonne continuation,\nStanislas BASQUIN — Noah Consultant` }
+    ]
+  },
+  daf: {
+    linkedin: [
+      { label: "Message 1 — Connexion (J+0)", text: (p, e) => `Bonjour ${p}, le pilotage de la performance financière par la donnée est devenu critique. J'aide les DAF à fiabiliser et automatiser leurs reportings Power BI. Échangeons sur vos enjeux actuels chez ${e}.` },
+      { label: "Message 2 — Relance Valeur (J+3)", text: (p, e) => `Merci d'avoir accepté mon invitation, ${p}. Avez-vous déjà évalué le ROI de vos outils de BI actuels chez ${e} ? Je propose un Diagnostic Flash pour identifier des gisements d'économies immédiats et fiabiliser vos KPIs financiers.` },
+      { label: "Message 3 — Hook Pilotage (J+10)", text: (p, e) => `Bonjour ${p}, la clôture financière approche. Vos équipes chez ${e} passent-elles encore trop de temps sur Excel au lieu d'analyser les données ? Un dashboard Power BI bien conçu peut diviser ce temps par deux.` },
+      { label: "Message 4 — Break-up (J+21)", text: (p, e) => `Bonjour ${p}, je ne vous embête plus. Si le besoin d'automatiser vos reportings financiers et de gagner en visibilité sur votre ROI se présente chez ${e}, vous savez où me trouver. Excellente journée !` }
+    ],
+    email: [
+      { label: "Email 1 — Premier contact (J+0)", subject: (p, e) => `Fiabilisation de vos reportings financiers et ROI`, text: (p, e) => `Bonjour ${p},\n\nLa prise de décision rapide repose sur des données fiables. Notre expertise sur Power BI permet aux DAF d'automatiser leurs reportings et de garantir l'exactitude des KPIs chez ${e}.\n\nUn échange de 15 minutes vous intéresserait-il ?\n\nBien cordialement,\nStanislas BASQUIN — Noah Consultant` },
+      { label: "Email 2 — Relance (J+5)", subject: (p, e) => `Re: Fiabilisation de vos reportings financiers et ROI`, text: (p, e) => `Bonjour ${p},\n\nJe fais suite à mon email. Saviez-vous qu'une automatisation efficace sous Power BI peut réduire de 40% le temps passé par vos équipes sur la consolidation des données chez ${e} ?\n\nBien cordialement,\nStanislas BASQUIN — Noah Consultant` },
+      { label: "Email 3 — Hook Performance (J+14)", subject: (p, e) => `Visibilité en temps réel sur votre performance chez ${e}`, text: (p, e) => `Bonjour ${p},\n\nDans un contexte économique incertain, le pilotage en temps réel est un avantage concurrentiel. Avez-vous les bons tableaux de bord pour anticiper vos flux de trésorerie chez ${e} ?\n\nBien cordialement,\nStanislas BASQUIN — Noah Consultant` },
+      { label: "Email 4 — Break-up (J+30)", subject: (p, e) => `Clôture de nos échanges — Pilotage financier`, text: (p, e) => `Bonjour ${p},\n\nJe clôture mes relances. Je reste à votre disposition si vous souhaitez un jour auditer vos processus de reporting financier chez ${e}.\n\nBonne continuation,\nStanislas BASQUIN — Noah Consultant` }
+    ]
+  }
+};
+
+// ===================== GENERATOR =====================
+function updateGeneratorPreview() { /* live preview on change */ }
+
+function generateScript() {
+  const cible = document.getElementById('gen-cible').value;
+  const canal = document.getElementById('gen-canal').value;
+  const prenom = document.getElementById('gen-prenom').value || '[Prénom]';
+  const entreprise = document.getElementById('gen-entreprise').value || '[Entreprise]';
+  const step = parseInt(document.getElementById('gen-step').value) - 1;
+
+  const seq = scripts[cible][canal];
+  const item = seq[step];
+  const text = item.text(prenom, entreprise);
+
+  let html = `<div class="message-block">
+    <div class="msg-label">${item.label}</div>`;
+  if (item.subject) {
+    html += `<p><strong>Objet :</strong> ${item.subject(prenom, entreprise)}</p><br/>`;
+  }
+  html += `<p style="white-space:pre-line;">${text}</p></div>`;
+
+  document.getElementById('script-content').innerHTML = html;
+  document.getElementById('script-output-label').textContent = `Script — ${cible.toUpperCase()} / ${canal.charAt(0).toUpperCase() + canal.slice(1)}`;
+  document.getElementById('script-output').classList.add('visible');
+  showToast('✅ Script généré !');
+}
+
+function generateAllSteps() {
+  const cible = document.getElementById('gen-cible').value;
+  const canal = document.getElementById('gen-canal').value;
+  const prenom = document.getElementById('gen-prenom').value || '[Prénom]';
+  const entreprise = document.getElementById('gen-entreprise').value || '[Entreprise]';
+  const seq = scripts[cible][canal];
+
+  let html = '';
+  seq.forEach(item => {
+    html += `<div class="message-block">
+      <div class="msg-label">${item.label}</div>`;
+    if (item.subject) {
+      html += `<p><strong>Objet :</strong> ${item.subject(prenom, entreprise)}</p><br/>`;
+    }
+    html += `<p style="white-space:pre-line;">${item.text(prenom, entreprise)}</p></div>`;
+  });
+
+  document.getElementById('script-content').innerHTML = html;
+  document.getElementById('script-output-label').textContent = `Séquence complète — ${cible.toUpperCase()} / ${canal.charAt(0).toUpperCase() + canal.slice(1)}`;
+  document.getElementById('script-output').classList.add('visible');
+  showToast('✅ Séquence complète générée !');
+}
+
+function copyScript() {
+  const blocks = document.querySelectorAll('#script-content .message-block p');
+  let text = '';
+  blocks.forEach(b => { text += b.innerText + '\n\n---\n\n'; });
+  navigator.clipboard.writeText(text.trim()).then(() => showToast('📋 Copié dans le presse-papier !'));
+}
+
+function addToLeads() {
+  const prenom = document.getElementById('gen-prenom').value;
+  const entreprise = document.getElementById('gen-entreprise').value;
+  const cible = document.getElementById('gen-cible').value;
+  if (!prenom && !entreprise) { showToast('⚠️ Renseignez un prénom ou une entreprise.'); return; }
+  leads.push({
+    id: Date.now(),
+    prenom: prenom || '',
+    nom: '',
+    entreprise: entreprise || '',
+    role: cible.toUpperCase(),
+    source: 'LinkedIn',
+    statut: 'Contacté',
+    action: 'Relance J+3'
+  });
+  saveData();
+  showToast('✅ Contact ajouté au CRM !');
+}
+
+// ===================== PIPELINE =====================
+const pipelineStages = ['Diagnostic Flash', 'Proposition', 'Négociation', 'Signature'];
+const stageColors = { 'Diagnostic Flash': '#4f7cff', 'Proposition': '#f59e0b', 'Négociation': '#7c5cff', 'Signature': '#22c55e' };
+
+function renderPipeline() {
+  // Stats
+  const totalDeals = deals.length;
+  const totalPipeline = deals.reduce((s, d) => s + (parseFloat(d.montant) || 0) * (parseFloat(d.proba) || 0) / 100, 0);
+  const wonDeals = deals.filter(d => d.etape === 'Signature').length;
+  const avgProba = deals.length ? Math.round(deals.reduce((s, d) => s + (parseFloat(d.proba) || 0), 0) / deals.length) : 0;
+
+  document.getElementById('pipeline-stats').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Opportunités</div><div class="stat-value">${totalDeals}</div><div class="stat-sub">en cours</div></div>
+    <div class="stat-card"><div class="stat-label">Pipeline pondéré</div><div class="stat-value">${Math.round(totalPipeline).toLocaleString('fr-FR')} €</div><div class="stat-sub">valeur ajustée</div></div>
+    <div class="stat-card"><div class="stat-label">En signature</div><div class="stat-value">${wonDeals}</div><div class="stat-sub">deals</div></div>
+    <div class="stat-card"><div class="stat-label">Probabilité moy.</div><div class="stat-value">${avgProba}%</div><div class="stat-sub">du pipeline</div></div>
+  `;
+
+  // Kanban
+  let html = '';
+  pipelineStages.forEach(stage => {
+    const stageDeals = deals.filter(d => d.etape === stage);
+    const color = stageColors[stage];
+    html += `<div class="kanban-col">
+      <div class="kanban-col-header" style="color:${color}">
+        ${stage}
+        <span class="kanban-badge">${stageDeals.length}</span>
+      </div>`;
+    if (stageDeals.length === 0) {
+      html += `<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px 0;">Aucune opportunité</div>`;
+    }
+    stageDeals.forEach(d => {
+      html += `<div class="kanban-card">
+        <div class="kc-name">${d.nom || 'Opportunité'}</div>
+        <div class="kc-company">${d.entreprise || ''}</div>
+        <div class="kc-amount">${d.montant ? parseInt(d.montant).toLocaleString('fr-FR') + ' €' : '—'}</div>
+        <span class="kc-role ${d.role || 'dsi'}">${(d.role || 'DSI').toUpperCase()}</span>
+        ${d.proba ? `<div style="font-size:11px;color:var(--muted);margin-top:4px;">Proba: ${d.proba}%</div>` : ''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('kanban-board').innerHTML = html;
+}
+
+function saveDeal() {
+  const nom = document.getElementById('deal-nom').value;
+  if (!nom) { showToast('⚠️ Renseignez un nom d\'opportunité.'); return; }
+  deals.push({
+    id: Date.now(),
+    nom: nom,
+    entreprise: document.getElementById('deal-entreprise').value,
+    contact: document.getElementById('deal-contact').value,
+    montant: document.getElementById('deal-montant').value,
+    proba: document.getElementById('deal-proba').value,
+    etape: document.getElementById('deal-etape').value,
+    role: document.getElementById('deal-role').value
+  });
+  saveData();
+  closeModal('modal-add-deal');
+  renderPipeline();
+  showToast('✅ Opportunité ajoutée !');
+  ['deal-nom','deal-entreprise','deal-contact','deal-montant','deal-proba'].forEach(id => document.getElementById(id).value = '');
+}
+
+// ===================== LEADS =====================
+const statusClass = { 'Nouveau': 'status-nouveau', 'Contacté': 'status-contacte', 'Qualifié': 'status-qualifie', 'Négociation': 'status-negocia', 'Gagné': 'status-gagne', 'Perdu': 'status-perdu' };
+
+function renderLeads() {
+  const tbody = document.getElementById('leads-table-body');
+  const empty = document.getElementById('leads-empty');
+  if (leads.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+  tbody.innerHTML = leads.map((l, i) => `
+    <tr>
+      <td><strong>${l.prenom} ${l.nom}</strong></td>
+      <td>${l.entreprise || '—'}</td>
+      <td><span class="kc-role ${(l.role || 'DSI').toLowerCase()}">${l.role || 'DSI'}</span></td>
+      <td>${l.source || '—'}</td>
+      <td><span class="status-badge ${statusClass[l.statut] || 'status-nouveau'}">${l.statut || 'Nouveau'}</span></td>
+      <td>${l.action || '—'}</td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="deleteLead(${i})">🗑</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function saveLead() {
+  const prenom = document.getElementById('lead-prenom').value;
+  if (!prenom) { showToast('⚠️ Renseignez un prénom.'); return; }
+  leads.push({
+    id: Date.now(),
+    prenom: prenom,
+    nom: document.getElementById('lead-nom').value,
+    entreprise: document.getElementById('lead-entreprise').value,
+    role: document.getElementById('lead-role').value,
+    source: document.getElementById('lead-source').value,
+    statut: document.getElementById('lead-statut').value,
+    action: document.getElementById('lead-action').value
+  });
+  saveData();
+  closeModal('modal-add-lead');
+  renderLeads();
+  showToast('✅ Contact enregistré !');
+  ['lead-prenom','lead-nom','lead-entreprise','lead-action'].forEach(id => document.getElementById(id).value = '');
+}
+
+function deleteLead(i) {
+  if (confirm('Supprimer ce contact ?')) {
+    leads.splice(i, 1);
+    saveData();
+    renderLeads();
+    showToast('🗑 Contact supprimé.');
+  }
+}
+
+// ===================== PLAYBOOK =====================
+const playbookData = {
+  'dsi-linkedin': { title: 'DSI — Séquence LinkedIn (4 messages)', items: scripts.dsi.linkedin },
+  'dsi-email': { title: 'DSI — Séquence Email (4 emails)', items: scripts.dsi.email },
+  'daf-linkedin': { title: 'DAF — Séquence LinkedIn (4 messages)', items: scripts.daf.linkedin },
+  'daf-email': { title: 'DAF — Séquence Email (4 emails)', items: scripts.daf.email }
+};
+
+function switchSeqTab(key) {
+  document.querySelectorAll('.seq-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  renderPlaybook(key);
+}
+
+function renderPlaybook(key) {
+  const data = playbookData[key];
+  let html = `<div class="card"><div class="card-title"><div class="icon">📖</div>${data.title}</div>`;
+  data.items.forEach(item => {
+    html += `<div class="script-output visible" style="margin-bottom:14px;">
+      <h4>${item.label}</h4>
+      <div class="message-block">`;
+    if (item.subject) {
+      html += `<p><strong>Objet :</strong> ${item.subject('[Prénom]', '[Entreprise]')}</p><br/>`;
+    }
+    html += `<p style="white-space:pre-line;">${item.text('[Prénom]', '[Entreprise]')}</p>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  document.getElementById('playbook-content').innerHTML = html;
+}
+
+// ===================== INIT =====================
+renderLeads();
+renderPlaybook('dsi-linkedin');
+</script>
+</body>
+</html>
